@@ -11,7 +11,7 @@ WORKDIR /srv/timeless
 
 RUN apt-get update \
   && apt-get --yes --no-install-recommends install \
-  build-essential libevent-dev libffi-dev openjdk-7-jre openjdk-7-jdk \
+  build-essential libevent-dev libffi-dev openjdk-7-jre openjdk-7-jdk nginx \
   && rm -rf /var/lib/apt/lists/*
 
 # Adding these files here lets us add the entire source directory
@@ -21,13 +21,15 @@ ADD requirements.txt /tmp/
 # development.txt includes requirements.txt
 RUN pip install -r /tmp/requirements.txt
 
+# uwsgi
+RUN pip install uwsgi
+
 ADD . /srv/timeless
 
 USER timeless
 
-ENV TIMELESS_PORT 8080
+VOLUME /var/log
 
-EXPOSE 8080
+EXPOSE 5000
 
-CMD exec uwsgi $UWSGI_OPTS --http :$TIMELESS_PORT --workers $WORKERS \
-  --wsgi-file timeless/wsgi.py
+CMD exec uwsgi --enable-threads --http-socket 0.0.0.0.5000 --wsgi-file timeless/wsgi.py --master --processes $WORKERS

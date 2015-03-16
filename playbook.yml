@@ -1,6 +1,7 @@
 ---
 - hosts: all
   sudo: yes
+- include: timeless.yml
 
   vars:
     docker_version: 1.5.0
@@ -26,6 +27,8 @@
         - libevent-dev
         - libffi-dev
         - openjdk-7-jre
+        - nginx
+        - uwsgi
         - openjdk-7-jdk
 
     - name: add vagrant user to docker and adm groups
