@@ -1,0 +1,42 @@
+---
+- hosts: all
+  sudo: yes
+
+  vars:
+    docker_version: 1.5.0
+
+  tasks:
+    - name: add docker repository key
+      apt_key: url=https://get.docker.io/gpg state=present
+
+    - name: add docker repository
+      apt_repository: >
+        repo="deb http://get.docker.io/ubuntu docker main" state=present
+
+    - name: ensure that apt is ok
+      command: |
+        dpkg --configure -a
+
+    - name: install docker and other packages
+      apt: pkg={{ item }} state=present
+      with_items:
+        - lxc-docker-{{ docker_version }}
+        - linux-image-extra-virtual
+        - build-essential
+        - libevent-dev
+        - libffi-dev
+        - openjdk-7-jre
+        - openjdk-7-jdk
+
+    - name: add vagrant user to docker and adm groups
+      user: name=vagrant groups=docker,adm append=yes
+
+    - name: build docker image
+      command: |
+        docker build -t timeless .
+      args:
+        chdir: /sandbox
+
+    - name: run the server
+      command: |
+        docker run -d --net=host timeless

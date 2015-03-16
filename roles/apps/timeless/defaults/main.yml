@@ -1,0 +1,9 @@
+app_environment:
+  PORT: "4200"
+  LOGLEVEL: "DEBUG"
+  HOST: "{{ domain }}"
+  DOMAIN: "{{ domain }}"
+  PATH: "/srv/timeless/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/srv/redis/bin"
+  PYTHONPATH: "/srv/timeless/src:/srv/timeless/venv/lib/python2.7/site-packages:$PYTHONPATH"
+  PYTHONDONTWRITEBYTECODE: "x"
+  LANG: "en_US.utf8"

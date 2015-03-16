@@ -1,0 +1,11 @@
+export SQLALCHEMY_DATABASE_URI="{{ SQLALCHEMY_DATABASE_URI }}"
+export REDIS_URI="{{ REDIS_URI }}"
+
+{% for k, v in app_environment.items() %}export {{ k }}="{{ v }}"
+{% if not loop.last %}
+{% endif %}{% endfor %}
+
+source {{ virtualenv_path }}/bin/activate
+cd {{ application_path }}
+echo "Ready for:"
+echo python manage.py shell

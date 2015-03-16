@@ -1,0 +1,21 @@
+- name: install nginx config file for the socketio app
+  template: src=nginx.conf dest=/etc/nginx/sites-available/{{ application_name }}.conf
+            owner=root group=root mode=644
+  tags:
+    - nginx
+
+- name: ensure no previous link for nginx
+  file: path=/etc/nginx/sites-enabled/{{ application_name }}.conf state=absent
+  tags:
+    - nginx
+
+- name: enable nginx config file
+  file: src=/etc/nginx/sites-available/{{ application_name }}.conf
+        dest=/etc/nginx/sites-enabled/{{ application_name }}.conf
+        state=link
+  notify: restart nginx
+  tags:
+    - nginx
+
+- name: ensure nginx is running
+  shell: service nginx restart

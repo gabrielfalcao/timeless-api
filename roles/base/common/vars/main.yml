@@ -1,0 +1,9 @@
+user: "ubuntu"
+extra_users:
+  gabrielfalcao: "gabrielfalcao"
+  bendegroot: "bueller"
+  peter: "azlyth"
+
+production_users:
+  gabrielfalcao: "gabrielfalcao"
+  bendegroot: "bueller"

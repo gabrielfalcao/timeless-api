@@ -1,0 +1,46 @@
+- name: install compatible version of distribute
+  pip: name="distribute==0.7.3"
+       virtualenv={{ virtualenv_path }}
+  tags:
+    - refresh
+
+- name: install requirements
+  pip: requirements="{{ application_path }}"/requirements.txt
+       virtualenv={{ virtualenv_path }}
+  tags:
+    - refresh
+
+- name: install boto
+  pip: name="boto"
+       virtualenv={{ virtualenv_path }}
+  tags:
+    - refresh
+
+- name: install sqlalchemy
+  pip: name="sqlalchemy"
+       virtualenv={{ virtualenv_path }}
+  tags:
+    - refresh
+
+- name: install psycopg2
+  pip: name="psycopg2"
+       virtualenv={{ virtualenv_path }}
+  tags:
+    - refresh
+
+- name: ensure default encoding in venv
+  template: src=sitecustomize.py dest={{ virtualenv_path }}/lib/python2.7/sitecustomize.py
+            owner=root group=root mode=0555
+  tags:
+    - refresh
+
+
+- name: ensure default encoding global
+  template: src=sitecustomize.py dest=/usr/lib/python2.7/sitecustomize.py
+            owner=root group=root mode=0555
+  tags:
+    - refresh
+
+
+- name: install pypi-server
+  pip: name="pypiserver"

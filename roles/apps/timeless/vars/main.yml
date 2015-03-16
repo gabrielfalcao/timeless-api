@@ -1,0 +1,11 @@
+repository_name: timeless
+repository_version: master
+application_name: timeless
+application_path: /srv/timeless/src
+launchpad_path: /srv/timeless/launchpad
+application_conf_path: /srv/timeless/etc
+virtualenv_path: /srv/timeless/venv
+timeless_port_number: 4200
+s3_postgres_backup_conf_path: /srv/timeless/etc/backup.conf.sh
+s3_backup_bucket_name: "weedlabs_{{ environment_name }}_backups"
+backup_folder_path: "/srv/backups"

@@ -1,0 +1,24 @@
+description     "Timeless master"
+author          "Canary DevOps <devops@canary.is>"
+
+start on (started networking)
+
+respawn
+respawn limit 5 60
+
+env TIMELESS_MODE=master
+env TIMELESS_DB_URL=sqlite:////var/lib/timeless/state.sqlite
+env TIMELESS_URL=https://ci.cnry.io/
+env TIMELESS_HTTP_PORT=tcp:8080:interface=127.0.0.1
+env TIMELESS_CONFIG_DIR=/var/lib/timeless
+env TIMELESS_CHANGE_HOOK_AUTH=file:/var/lib/timeless/change_hook.passwd
+env TIMELESS_GITHUB_API_TOKEN={{ timeless_github_api_token }}
+
+exec docker run --rm --net=host \
+  -e TIMELESS_MODE -e TIMELESS_DB_URL -e TIMELESS_URL \
+  -e TIMELESS_HTTP_PORT -e TIMELESS_CONFIG_DIR \
+  -e TIMELESS_CHANGE_HOOK_AUTH -e TIMELESS_GITHUB_API_TOKEN \
+  --name=timeless-master \
+  --volume=/var/lib/timeless:/var/lib/timeless \
+  --volume=/var/lib/timeless/builds:/srv/timeless/master/canary/builds \
+  timeless
