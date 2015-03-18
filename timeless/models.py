@@ -18,6 +18,18 @@ class NewsletterSubscription(Model):
     id = columns.TimeUUID(primary_key=True, partition_key=True)
     name = columns.Text()
     email = columns.Text(index=True)
+    date_created = columns.DateTime()
+
+    @classmethod
+    def subscribe(cls, name, email):
+        try:
+            return cls.create(
+                name=name or email,
+                email=email,
+                date_created=datetime.utcnow()
+            )
+        except Exception:
+            logging.exception('Failed to subscribe name:%s email:%s', name, email)
 
 
 class UserToken(Model):

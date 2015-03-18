@@ -12,7 +12,7 @@ web = tumbler.module(__name__)
 
 # from timeless.models import Post
 from timeless.api.core import authenticated, ensure_json_request
-from timeless.models import User
+from timeless.models import User, NewsletterSubscription
 
 
 @web.post('/api/posts')
@@ -82,3 +82,29 @@ def authenticate_user():
         'result': 'error',
         'message': 'could not authenticate'
     }, 401)
+
+
+@web.post('/api/newsletter/subscribe')
+def subscribe_newsletter():
+    data = parse_auth_payload({
+        'email': unicode,
+        'name': any
+    })
+
+    email = data.pop('email')
+    name = data.pop('name', None)
+
+    subscription = NewsletterSubscription.create(name, email)
+
+    if not subscription:
+        return json_response({
+            'result': 'error',
+            'message': 'could not create subscription',
+            'id': subscription.id
+        }, 400)
+
+    return json_response({
+        'result': 'OK',
+        'message': 'newsletter subscription created',
+        'id': subscription.id
+    })

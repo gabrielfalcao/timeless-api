@@ -6,7 +6,7 @@ import uuid
 import base64
 from freezegun import freeze_time
 from datetime import datetime
-from timeless.models import User, Post, UserToken
+from timeless.models import User, Post, UserToken, NewsletterSubscription
 
 from .helpers import api
 
@@ -172,3 +172,24 @@ def test_delete_post_that_belongs_to_her(context):
 
     # Then it should be empty
     results.should.be.empty
+
+
+@api
+def test_subscribe_to_newsletter(context):
+    ('Anyone should be able to put their email and create a subscription')
+
+    # Given that I POST to /api/newsletter/subscribe
+    response = context.http.post(
+        '/api/newsletter/subscribe',
+        data=json.dumps({
+            'email': 'foo@bar.com',
+        }),
+        headers=context.headers,
+    )
+
+    # Then the response should be 200
+    response.status_code.should.equal(200)
+
+    # And there should be one newsletter subscription
+    results = list(NewsletterSubscription.all())
+    results.should.have.length_of(1)
