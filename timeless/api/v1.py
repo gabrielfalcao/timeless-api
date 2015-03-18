@@ -37,6 +37,24 @@ def create_post(user):
     })
 
 
+@web.delete('/api/posts/<uuid>')
+@authenticated
+def delete_post(user, uuid):
+    deleted = user.delete_post(uuid)
+    if deleted:
+        status = 'OK'
+    else:
+        status = 'error'
+
+    logging.info('deleting post %s by %s: %s', uuid, user.email, status)
+
+    return json_response({
+        'result': status,
+        'message': 'Post deleted',
+        'uuid': uuid,
+    })
+
+
 def parse_auth_payload():
     data = ensure_json_request({
         'info': unicode,
@@ -60,4 +78,7 @@ def authenticate_user():
             'created_at': token.date_created.isoformat()
         })
 
-    abort(404)
+    return json_response({
+        'result': 'error',
+        'message': 'could not authenticate'
+    }, 401)

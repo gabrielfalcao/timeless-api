@@ -71,6 +71,14 @@ class User(Model):
             date_added=datetime.utcnow(),
         )
 
+    def delete_post(self, uuid):
+        post = Post.objects.filter(id=uuid, user_id=self.id).get()
+        if not post:
+            return False
+
+        post.delete()
+        return True
+
 
 class Post(Model):
     id = columns.TimeUUID(primary_key=True, partition_key=True)
