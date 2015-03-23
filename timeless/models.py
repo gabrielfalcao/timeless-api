@@ -24,6 +24,7 @@ class NewsletterSubscription(Model):
     def subscribe(cls, name, email):
         try:
             return cls.create(
+                id=uuid.uuid1(),
                 name=name or email,
                 email=email,
                 date_created=datetime.utcnow()

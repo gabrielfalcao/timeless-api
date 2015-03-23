@@ -2,12 +2,13 @@
 # -*- coding: utf-8 -*-
 #
 from __future__ import unicode_literals
+import uuid
 import json
 import base64
 import logging
 from tumbler import tumbler
 from tumbler import json_response
-from flask import abort
+from datetime import datetime
 web = tumbler.module(__name__)
 
 # from timeless.models import Post
@@ -86,7 +87,7 @@ def authenticate_user():
 
 @web.post('/api/newsletter/subscribe')
 def subscribe_newsletter():
-    data = parse_auth_payload({
+    data = ensure_json_request({
         'email': unicode,
         'name': any
     })
@@ -94,13 +95,13 @@ def subscribe_newsletter():
     email = data.pop('email')
     name = data.pop('name', None)
 
-    subscription = NewsletterSubscription.create(name, email)
+    subscription = NewsletterSubscription.subscribe(name, email)
 
     if not subscription:
         return json_response({
             'result': 'error',
             'message': 'could not create subscription',
-            'id': subscription.id
+            'meta': {'email': email, 'name': name}
         }, 400)
 
     return json_response({
