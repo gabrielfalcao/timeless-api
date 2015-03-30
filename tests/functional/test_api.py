@@ -175,6 +175,54 @@ def test_delete_post_that_belongs_to_her(context):
 
 
 @api
+def test_can_edit_post(context):
+    ('A user can edit a post that belongs to her')
+    # Given a User containing that token
+    user = User.create(
+        id=uuid.uuid1(),
+        name=u'April Doe',
+        email='jd@gmail.com',
+        password='123',
+        date_added=datetime(1988, 2, 25),
+    )
+    # And a Token
+    user_token = UserToken.create(
+        token=str(uuid.uuid4()),
+        user_id=user.id
+    )
+    # And that she has created a post
+    post = user.create_post(
+        title="foo bar",
+        description="baz",
+        body="The initial content",
+        link="http://foo.bar",
+    )
+
+    # When I prepare the headers for authentication
+    context.headers.update({
+        'Authorization': 'Bearer: {0}'.format(user_token.token)
+    })
+
+    # And I PUT to /api/posts
+    response = context.http.put(
+        '/api/posts/{0}'.format(post.id),
+        data=json.dumps({
+            'body': 'the new content'
+        }),
+        headers=context.headers,
+    )
+
+    # Then the response should be 200
+    response.status_code.should.equal(200)
+
+    # And there should be one post
+    (post, ) = Post.all()
+
+    # And it should have the new body
+    post.body.should.equal('the new content')
+
+
+@api
 def test_subscribe_to_newsletter(context):
     ('Anyone should be able to put their email and create a subscription')
 

@@ -2,13 +2,13 @@
 # -*- coding: utf-8 -*-
 #
 from __future__ import unicode_literals
-import uuid
+
 import json
 import base64
 import logging
 from tumbler import tumbler
 from tumbler import json_response
-from datetime import datetime
+
 web = tumbler.module(__name__)
 
 # from timeless.models import Post
@@ -33,6 +33,28 @@ def create_post(user):
     return json_response({
         'result': 'OK',
         'message': 'Post created',
+        'uuid': post.id,
+        'url': post.get_url()
+    })
+
+
+@web.put('/api/posts/<uuid>')
+@authenticated
+def edit_post(user, uuid):
+    data = ensure_json_request({
+        'title': any,
+        'slug': any,
+        'body': any,
+        'description': any,
+        'link': any,
+    })
+
+    post = user.edit_post(uuid, data)
+    logging.info('editing post %s by %s', post.title, user.email)
+
+    return json_response({
+        'result': 'OK',
+        'message': 'Post edited',
         'uuid': post.id,
         'url': post.get_url()
     })

@@ -92,6 +92,19 @@ class User(Model):
         post.delete()
         return True
 
+    def edit_post(self, uuid, data):
+        post = Post.objects.filter(id=uuid, user_id=self.id).get()
+        if not post:
+            return False
+
+        for key, value in data.items():
+            if value is None:
+                continue
+            setattr(post, key, value)
+
+        post.save()
+        return post
+
 
 class Post(Model):
     id = columns.TimeUUID(primary_key=True, partition_key=True)
