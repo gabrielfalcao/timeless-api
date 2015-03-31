@@ -47,6 +47,26 @@ def test_create_post(context):
 
     # Then the response should be 200
     response.status_code.should.equal(200)
+
+    # And it should be a json
+    data = json.loads(response.data)
+    date_added = data.pop('date_added', None)
+    post_id = data.pop('id', None)
+    data.should.equal({
+        'body': u'The body',
+        'description': u'baz',
+        'last_edited': None,
+        'link': u'http://foo.bar',
+        'main_image': None,
+        'slug': u'foobar',
+        'tags': None,
+        'title': u'foo bar',
+        'user_id': str(user.id)
+    })
+
+    date_added.should_not.be.none
+    post_id.should_not.be.none
+
     # And it should be in the list of posts
     results = list(Post.all())
 
@@ -167,6 +187,24 @@ def test_delete_post_that_belongs_to_her(context):
     # Then the response should be 200
     response.status_code.should.equal(200)
 
+    # And it should be a json
+    data = json.loads(response.data)
+    date_added = data.pop('date_added', None)
+    data.should.equal({
+        'id': str(post.id),
+        'body': u'The body',
+        'description': u'baz',
+        'last_edited': None,
+        'link': u'http://foo.bar',
+        'main_image': None,
+        'slug': u'foobar',
+        'tags': None,
+        'title': u'foo bar',
+        'user_id': str(user.id)
+    })
+
+    date_added.should_not.be.none
+
     # And there should be no posts
     results = list(Post.all())
 
@@ -215,11 +253,86 @@ def test_can_edit_post(context):
     # Then the response should be 200
     response.status_code.should.equal(200)
 
+    # And it should be a json
+    data = json.loads(response.data)
+    date_added = data.pop('date_added', None)
+    data.should.equal({
+        'id': str(post.id),
+        'body': u'the new content',
+        'description': u'baz',
+        'last_edited': None,
+        'link': u'http://foo.bar',
+        'main_image': None,
+        'slug': u'foobar',
+        'tags': None,
+        'title': u'foo bar',
+        'user_id': str(user.id)
+    })
+
+    date_added.should_not.be.none
+
     # And there should be one post
     (post, ) = Post.all()
 
     # And it should have the new body
     post.body.should.equal('the new content')
+
+
+@api
+def test_can_retrieve_post(context):
+    ('A user can retrieve a post that belongs to her')
+    # Given a User containing that token
+    user = User.create(
+        id=uuid.uuid1(),
+        name=u'April Doe',
+        email='jd@gmail.com',
+        password='123',
+        date_added=datetime(1988, 2, 25),
+    )
+    # And a Token
+    user_token = UserToken.create(
+        token=str(uuid.uuid4()),
+        user_id=user.id
+    )
+    # And that she has created a post
+    post = user.create_post(
+        title="foo bar",
+        description="baz",
+        body="The initial content",
+        link="http://foo.bar",
+    )
+
+    # When I prepare the headers for authentication
+    context.headers.update({
+        'Authorization': 'Bearer: {0}'.format(user_token.token)
+    })
+
+    # And I PUT to /api/posts
+    response = context.http.get(
+        '/api/posts/{0}'.format(post.id),
+        headers=context.headers,
+    )
+
+    # Then the response should be 200
+    response.status_code.should.equal(200)
+
+    # And it should be a json
+    data = json.loads(response.data)
+    date_added = data.pop('date_added', None)
+    data.should.equal({
+        'id': str(post.id),
+        'body': u'The initial content',
+        'description': u'baz',
+        'last_edited': None,
+        'link': u'http://foo.bar',
+        'main_image': None,
+        'slug': u'foobar',
+        'tags': None,
+        'title': u'foo bar',
+        'user_id': str(user.id)
+    })
+
+    date_added.should_not.be.none
 
 
 @api

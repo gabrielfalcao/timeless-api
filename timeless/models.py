@@ -84,16 +84,18 @@ class User(Model):
             date_added=datetime.utcnow(),
         )
 
-    def delete_post(self, uuid):
-        post = Post.objects.filter(id=uuid, user_id=self.id).get()
-        if not post:
-            return False
+    def get_post(self, uuid):
+        post = Post.get(id=uuid, user_id=self.id)
+        return post
 
-        post.delete()
-        return True
+    def delete_post(self, uuid):
+        post = self.get_post(uuid)
+        if post:
+            post.delete()
+        return post
 
     def edit_post(self, uuid, data):
-        post = Post.objects.filter(id=uuid, user_id=self.id).get()
+        post = self.get_post(uuid)
         if not post:
             return False
 
@@ -121,3 +123,6 @@ class Post(Model):
 
     def get_url(self):
         return get_absolute_url('/api/post/{0}'.format(self.id))
+
+    def to_dict(self):
+        return dict(self.items())

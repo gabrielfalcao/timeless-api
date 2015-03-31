@@ -30,12 +30,7 @@ def create_post(user):
     post = user.create_post(**data)
     logging.info('creating post %s by %s', post.title, user.email)
 
-    return json_response({
-        'result': 'OK',
-        'message': 'Post created',
-        'uuid': post.id,
-        'url': post.get_url()
-    })
+    return json_response(post.to_dict())
 
 
 @web.put('/api/posts/<uuid>')
@@ -52,12 +47,16 @@ def edit_post(user, uuid):
     post = user.edit_post(uuid, data)
     logging.info('editing post %s by %s', post.title, user.email)
 
-    return json_response({
-        'result': 'OK',
-        'message': 'Post edited',
-        'uuid': post.id,
-        'url': post.get_url()
-    })
+    return json_response(post.to_dict())
+
+
+@web.get('/api/posts/<uuid>')
+@authenticated
+def retrieve_post(user, uuid):
+    post = user.get_post(uuid)
+    logging.info('editing post %s by %s', post.title, user.email)
+
+    return json_response(post.to_dict())
 
 
 @web.delete('/api/posts/<uuid>')
@@ -71,11 +70,10 @@ def delete_post(user, uuid):
 
     logging.info('deleting post %s by %s: %s', uuid, user.email, status)
 
-    return json_response({
-        'result': status,
-        'message': 'Post deleted',
-        'uuid': uuid,
-    })
+    if not deleted:
+        return json_response({'result': 'error'}, 500)
+
+    return json_response(deleted.to_dict())
 
 
 def parse_auth_payload():
