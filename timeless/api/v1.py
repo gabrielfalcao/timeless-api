@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 import json
 import base64
 import logging
+from dateutil.parser import parse as parse_datetime
 from tumbler import tumbler
 from tumbler import json_response
 
@@ -13,7 +14,11 @@ web = tumbler.module(__name__)
 
 # from timeless.models import Post
 from timeless.api.core import authenticated, ensure_json_request
-from timeless.models import User, NewsletterSubscription
+from timeless.models import User, NewsletterSubscription, Post
+
+
+def autodatetime(s):
+    return s and parse_datetime(s) or None
 
 
 @web.post('/api/posts')
@@ -25,6 +30,7 @@ def create_post(user):
         'body': any,
         'description': any,
         'link': any,
+        'date_published': autodatetime,
     })
 
     post = user.create_post(**data)
@@ -40,6 +46,7 @@ def edit_post(user, uuid):
         'title': any,
         'slug': any,
         'body': any,
+        'date_published': autodatetime,
         'description': any,
         'link': any,
     })
@@ -129,3 +136,10 @@ def subscribe_newsletter():
         'message': 'newsletter subscription created',
         'id': subscription.id
     })
+
+
+@web.get('/api/posts/latest')
+def latest_posts():
+    posts = Post.objects.all()
+    results = [p.to_dict() for p in posts]
+    return json_response(results)

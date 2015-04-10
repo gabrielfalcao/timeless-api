@@ -4,6 +4,7 @@ import re
 import uuid
 import bcrypt
 import logging
+from dateutil.parser import parse as parse_datetime
 from datetime import datetime
 from cqlengine import columns
 from cqlengine.models import Model
@@ -69,9 +70,14 @@ class User(Model):
             )
             return result
 
-    def create_post(self, title, slug=None, description=None, body=None, link=None):
+    def create_post(self, title, slug=None, description=None, body=None, link=None, date_published=None):
         if not slug:
             slug = slugify(title)
+
+        if isinstance(date_published, basestring):
+            date_published = parse_datetime(date_published)
+        elif date_published is None:
+            date_published = datetime.utcnow()
 
         return Post.create(
             id=uuid.uuid1(),
@@ -82,6 +88,7 @@ class User(Model):
             body=body,
             link=link,
             date_added=datetime.utcnow(),
+            date_published=date_published,
         )
 
     def get_post(self, uuid):
@@ -118,6 +125,7 @@ class Post(Model):
     tags = columns.Text()
     body = columns.Text()
     link = columns.Text(index=True)
+    date_published = columns.DateTime(primary_key=True)
     date_added = columns.DateTime(index=True)
     last_edited = columns.DateTime(index=True)
 

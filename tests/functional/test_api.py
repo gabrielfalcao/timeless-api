@@ -41,6 +41,7 @@ def test_create_post(context):
             'description': 'baz',
             'body': 'The body',
             'link': 'http://foo.bar',
+            'date_published': '2015-03-14T00:00:00',
         }),
         headers=context.headers,
     )
@@ -56,6 +57,7 @@ def test_create_post(context):
         'body': u'The body',
         'description': u'baz',
         'last_edited': None,
+        'date_published': '2015-03-14T00:00:00',
         'link': u'http://foo.bar',
         'main_image': None,
         'slug': u'foobar',
@@ -171,6 +173,7 @@ def test_delete_post_that_belongs_to_her(context):
         description="baz",
         body="The body",
         link="http://foo.bar",
+        date_published='2015-03-14'
     )
 
     # When I prepare the headers for authentication
@@ -195,6 +198,7 @@ def test_delete_post_that_belongs_to_her(context):
         'body': u'The body',
         'description': u'baz',
         'last_edited': None,
+        'date_published': '2015-03-14T00:00:00',
         'link': u'http://foo.bar',
         'main_image': None,
         'slug': u'foobar',
@@ -234,6 +238,7 @@ def test_can_edit_post(context):
         description="baz",
         body="The initial content",
         link="http://foo.bar",
+        date_published='2015-03-14',
     )
 
     # When I prepare the headers for authentication
@@ -245,7 +250,8 @@ def test_can_edit_post(context):
     response = context.http.put(
         '/api/posts/{0}'.format(post.id),
         data=json.dumps({
-            'body': 'the new content'
+            'body': 'the new content',
+            'date_published': '2015-03-14'
         }),
         headers=context.headers,
     )
@@ -261,6 +267,7 @@ def test_can_edit_post(context):
         'body': u'the new content',
         'description': u'baz',
         'last_edited': None,
+        'date_published': '2015-03-14T00:00:00',
         'link': u'http://foo.bar',
         'main_image': None,
         'slug': u'foobar',
@@ -300,6 +307,7 @@ def test_can_retrieve_post(context):
         description="baz",
         body="The initial content",
         link="http://foo.bar",
+        date_published='2015-03-14',
     )
 
     # When I prepare the headers for authentication
@@ -324,6 +332,7 @@ def test_can_retrieve_post(context):
         'body': u'The initial content',
         'description': u'baz',
         'last_edited': None,
+        'date_published': '2015-03-14T00:00:00',
         'link': u'http://foo.bar',
         'main_image': None,
         'slug': u'foobar',
@@ -354,3 +363,61 @@ def test_subscribe_to_newsletter(context):
     # And there should be one newsletter subscription
     results = list(NewsletterSubscription.all())
     results.should.have.length_of(1)
+
+
+@api
+def test_latest_posts_multiple_users(context):
+    ('Retrieving the 20 latest posts from 2 users')
+    april = User.create(
+        id=uuid.uuid1(),
+        name=u'April Doe',
+        email='jd@gmail.com',
+        password='123',
+        date_added=datetime(1988, 2, 25),
+    )
+    lorelei = User.create(
+        id=uuid.uuid1(),
+        name=u'Lorelei Doe',
+        email='ld@gmail.com',
+        password='123',
+        date_added=datetime(1988, 3, 14),
+    )
+    [
+        april.create_post(
+            title="one",
+            description="baz",
+            body="The body",
+            link="http://foo.bar",
+        ),
+        lorelei.create_post(
+            title="dois",
+            description="baz",
+            body="The body",
+            link="http://foo.bar",
+        ),
+        lorelei.create_post(
+            title="tres",
+            description="baz",
+            body="The body",
+            link="http://foo.bar",
+        ),
+        april.create_post(
+            title="four",
+            description="baz",
+            body="The body",
+            link="http://foo.bar",
+        )
+    ]
+
+    # Given that I GET to /api/posts/latest/
+    response = context.http.get(
+        '/api/posts/latest',
+        headers=context.headers,
+    )
+
+    # And it should be a list
+    data = json.loads(response.data)
+    data.should.be.a(list)
+
+    # And should contain 4 items
+    data.should.have.length_of(4)
