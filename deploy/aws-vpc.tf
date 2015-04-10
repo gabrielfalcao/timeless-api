@@ -1,6 +1,6 @@
 provider "aws" {
-	access_key = "${env.AWS_ACCESS_KEY_ID}"
-	secret_key = "${env.AWS_SECRET_ACCESS_KEY}"
+    access_key = "${var.aws_access_key}"
+    secret_key = "${var.aws_secret_key}"
         region = "us-east-1"
 }
 
@@ -47,7 +47,7 @@ resource "aws_instance" "quietness_co_nat" {
 	ami = "${var.aws_nat_ami}"
 	availability_zone = "us-east-1b"
 	instance_type = "m1.small"
-	key_name = "${var.aws_key_name}"
+	key_name = "weedlabs_master.pem"
 	security_groups = ["${aws_security_group.quietness_co_nat.id}"]
 	subnet_id = "${aws_subnet.quietness_co_east-1b-public.id}"
 	associate_public_ip_address = true
@@ -60,9 +60,6 @@ resource "aws_instance" "quietness_co_nat" {
 resource "aws_eip" "quietness_co_nat" {
 	instance = "${aws_instance.quietness_co_nat.id}"
         vpc = true
-        tags {
-                Name = "quietness_co_nat"
-        }
 }
 
 # Public subnets
@@ -176,12 +173,10 @@ resource "aws_instance" "quietness_co_bastion" {
 	ami = "${var.aws_ubuntu_ami}"
 	availability_zone = "us-east-1b"
 	instance_type = "t2.micro"
-	key_name = "${var.aws_key_name}"
+	key_name = "weedlabs_master.pem"
 	security_groups = ["${aws_security_group.quietness_co_bastion.id}"]
         subnet_id = "${aws_subnet.quietness_co_east-1b-public.id}"
-        provisioner "local-exec" {
-                command = "packer build -var 'aws_access_key=${env.AWS_ACCESS_KEY_ID}' -var 'aws_secret_key=${env.AWS_SECRET_ACCESS_KEY}' bastion.json"
-        }
+
         tags {
                 Name = "quietness_co_bastion"
         }

@@ -10,3 +10,6 @@ pip-delete-this-directory.txt
 builds.db
 .vagrant/
 timeless.yml
+deploy/terraform.tfstate
+deploy/terraform.tfstate.backup
+deploy/terraform.tfvars
