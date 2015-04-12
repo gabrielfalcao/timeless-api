@@ -47,7 +47,8 @@ resource "aws_instance" "quietness_co_nat" {
 	ami = "${var.aws_nat_ami}"
 	availability_zone = "us-east-1b"
 	instance_type = "m1.small"
-	key_name = "weedlabs_master.pem"
+        key_name = "weedlabs-master"
+        key_path = "/Users/gabrielfalcao/.ssh/weedlabs-master.pem"
 	security_groups = ["${aws_security_group.quietness_co_nat.id}"]
 	subnet_id = "${aws_subnet.quietness_co_east-1b-public.id}"
 	associate_public_ip_address = true
@@ -173,7 +174,8 @@ resource "aws_instance" "quietness_co_bastion" {
 	ami = "${var.aws_ubuntu_ami}"
 	availability_zone = "us-east-1b"
 	instance_type = "t2.micro"
-	key_name = "weedlabs_master.pem"
+        key_name = "weedlabs-master"
+        key_path = "/Users/gabrielfalcao/.ssh/weedlabs-master.pem"
 	security_groups = ["${aws_security_group.quietness_co_bastion.id}"]
         subnet_id = "${aws_subnet.quietness_co_east-1b-public.id}"
 
