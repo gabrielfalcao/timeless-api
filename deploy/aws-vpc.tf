@@ -1,3 +1,8 @@
+resource "aws_route53_zone" "primary" {
+   name = "quietness.co"
+}
+
+
 provider "aws" {
     access_key = "${var.aws_access_key}"
     secret_key = "${var.aws_secret_key}"
@@ -20,48 +25,47 @@ resource "aws_internet_gateway" "quietness_co_igw" {
 
 # NAT instance
 
-resource "aws_security_group" "quietness_co_nat" {
-	name = "nat"
-	description = "Allow services from the private subnet through NAT"
+# resource "aws_security_group" "quietness_co_nat" {
+# 	name = "nat"
+# 	description = "Allow services from the private subnet through NAT"
 
-	ingress {
-		from_port = 0
-		to_port = 65535
-		protocol = "tcp"
-		cidr_blocks = ["${aws_subnet.quietness_co_east-1b-private.cidr_block}"]
-	}
-	ingress {
-		from_port = 0
-		to_port = 65535
-		protocol = "tcp"
-		cidr_blocks = ["${aws_subnet.quietness_co_us-east-1e-private.cidr_block}"]
-	}
+# 	ingress {
+# 		from_port = 0
+# 		to_port = 65535
+# 		protocol = "tcp"
+# 		cidr_blocks = ["${aws_subnet.quietness_co_east-1b-private.cidr_block}"]
+# 	}
+# 	ingress {
+# 		from_port = 0
+# 		to_port = 65535
+# 		protocol = "tcp"
+# 		cidr_blocks = ["${aws_subnet.quietness_co_us-east-1e-private.cidr_block}"]
+# 	}
 
-        vpc_id = "${aws_vpc.quietness_co_vpc.id}"
-        tags {
-                Name = "quietness_co_nat"
-        }
-}
+#         vpc_id = "${aws_vpc.quietness_co_vpc.id}"
+#         tags {
+#                 Name = "quietness_co_nat"
+#         }
+# }
 
-resource "aws_instance" "quietness_co_nat" {
-	ami = "${var.aws_nat_ami}"
-	availability_zone = "us-east-1b"
-	instance_type = "m1.small"
-        key_name = "weedlabs-master"
-        key_path = "/Users/gabrielfalcao/.ssh/weedlabs-master.pem"
-	security_groups = ["${aws_security_group.quietness_co_nat.id}"]
-	subnet_id = "${aws_subnet.quietness_co_east-1b-public.id}"
-	associate_public_ip_address = true
-        source_dest_check = false
-        tags {
-                Name = "quietness_co_nat"
-        }
-}
+# resource "aws_instance" "quietness_co_nat" {
+# 	ami = "${var.aws_nat_ami}"
+# 	availability_zone = "us-east-1b"
+# 	instance_type = "m1.small"
+#         key_name = "weedlabs-master"
+# 	security_groups = ["${aws_security_group.quietness_co_nat.id}"]
+# 	subnet_id = "${aws_subnet.quietness_co_east-1b-public.id}"
+# 	associate_public_ip_address = true
+#         source_dest_check = false
+#         tags {
+#                 Name = "quietness_co_nat"
+#         }
+# }
 
-resource "aws_eip" "quietness_co_nat" {
-	instance = "${aws_instance.quietness_co_nat.id}"
-        vpc = true
-}
+# resource "aws_eip" "quietness_co_nat" {
+# 	instance = "${aws_instance.quietness_co_nat.id}"
+#         vpc = true
+# }
 
 # Public subnets
 
@@ -134,7 +138,7 @@ resource "aws_route_table" "quietness_co_us-east-1-private" {
 
 	route {
 		cidr_block = "0.0.0.0/0"
-		instance_id = "${aws_instance.quietness_co_nat.id}"
+		instance_id = "${aws_instance.quietness_co_bastion.id}"
         }
         tags {
                 Name = "quietness_co_us-east-1-private"
@@ -175,7 +179,6 @@ resource "aws_instance" "quietness_co_bastion" {
 	availability_zone = "us-east-1b"
 	instance_type = "t2.micro"
         key_name = "weedlabs-master"
-        key_path = "/Users/gabrielfalcao/.ssh/weedlabs-master.pem"
 	security_groups = ["${aws_security_group.quietness_co_bastion.id}"]
         subnet_id = "${aws_subnet.quietness_co_east-1b-public.id}"
 
@@ -187,4 +190,64 @@ resource "aws_instance" "quietness_co_bastion" {
 resource "aws_eip" "quietness_co_bastion" {
 	instance = "${aws_instance.quietness_co_bastion.id}"
 	vpc = true
+}
+
+# Web1
+
+resource "aws_security_group" "quietness_co_web1" {
+	name = "quietness_co_web1"
+	description = "Allow SSH traffic from the internet"
+
+	ingress {
+		from_port = 80
+		to_port = 80
+		protocol = "tcp"
+		cidr_blocks = ["0.0.0.0/0"]
+	}
+
+	ingress {
+		from_port = 443
+		to_port = 443
+		protocol = "tcp"
+		cidr_blocks = ["0.0.0.0/0"]
+	}
+
+	ingress {
+		from_port = 22
+		to_port = 22
+		protocol = "tcp"
+		cidr_blocks = ["172.16.0.0/24"]
+	}
+
+        vpc_id = "${aws_vpc.quietness_co_vpc.id}"
+        tags {
+                Name = "quietness_co_web1"
+        }
+}
+
+resource "aws_instance" "quietness_co_web1" {
+	ami = "${var.aws_web_ami}"
+	availability_zone = "us-east-1b"
+	instance_type = "m1.small"
+        key_name = "weedlabs-master"
+	security_groups = ["${aws_security_group.quietness_co_web1.id}"]
+        subnet_id = "${aws_subnet.quietness_co_east-1b-public.id}"
+
+        tags {
+                Name = "quietness_co_web1"
+        }
+}
+
+resource "aws_eip" "quietness_co_web1" {
+	instance = "${aws_instance.quietness_co_web1.id}"
+	vpc = true
+}
+
+
+resource "aws_route53_record" "web1" {
+   zone_id = "${aws_route53_zone.primary.zone_id}"
+   name = "quietness.co"
+   type = "A"
+   ttl = "300"
+   records = ["${aws_eip.quietness_co_web1.public_ip}"]
 }

@@ -8,3 +8,7 @@ variable "aws_nat_ami" {
 variable "aws_ubuntu_ami" {
 	default = "ami-b227efda"
 }
+
+variable "aws_web_ami" {
+	default = "ami-d05e75b8"
+}
