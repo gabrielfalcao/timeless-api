@@ -1,7 +1,7 @@
 ---
 - hosts: all
   sudo: yes
-- include: timeless.yml
+- include: quietness.yml
 
   vars:
     docker_version: 1.5.0
@@ -36,10 +36,10 @@
 
     - name: build docker image
       command: |
-        docker build -t timeless .
+        docker build -t quietness .
       args:
         chdir: /sandbox
 
     - name: run the server
       command: |
-        docker run -d --net=host timeless
+        docker run -d --net=host quietness

@@ -6,7 +6,7 @@ import uuid
 import base64
 from freezegun import freeze_time
 from datetime import datetime
-from timeless.models import User, Post, UserToken, NewsletterSubscription
+from quietness.models import User, Post, UserToken, NewsletterSubscription
 
 from .helpers import api
 

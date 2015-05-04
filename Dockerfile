@@ -3,19 +3,19 @@ FROM cnry/python:2.7
 MAINTAINER gabriel@nacaolivre.org
 
 ENV WORKERS 1
+ENV TIMELESS_CASSANDRA_HOST: localhost
+ENV TIMELESS_CASSANDRA_PORT: 5000
 
 RUN adduser --quiet --system --uid 1000 --group --disabled-login \
-  --home /srv/timeless timeless
+  --home /srv/quietness quietness
 
-WORKDIR /srv/timeless
+WORKDIR /srv/quietness
 
 RUN apt-get update \
   && apt-get --yes --no-install-recommends install \
   build-essential libevent-dev libffi-dev openjdk-7-jre openjdk-7-jdk nginx \
   && rm -rf /var/lib/apt/lists/*
 
-# Adding these files here lets us add the entire source directory
-# later, which means fewer cache invalidations for the install steps.
 ADD requirements.txt /tmp/
 
 # development.txt includes requirements.txt
@@ -24,12 +24,10 @@ RUN pip install -r /tmp/requirements.txt
 # uwsgi
 RUN pip install uwsgi
 
-ADD . /srv/timeless
+ADD . /srv/quietness
 
-USER timeless
-
-VOLUME /var/log
+USER quietness
 
 EXPOSE 5000
 
-CMD exec uwsgi --enable-threads --http-socket 0.0.0.0.5000 --wsgi-file timeless/wsgi.py --master --processes $WORKERS
+CMD exec uwsgi --enable-threads --http-socket 0.0.0.0.5000 --wsgi-file quietness/wsgi.py --master --processes $WORKERS

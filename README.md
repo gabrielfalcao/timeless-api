@@ -1,6 +1,6 @@
 # Timeless API
 
-Backend for timeless
+Backend for quietness
 
 ## Installing
 
@@ -32,7 +32,7 @@ make functional
 ### user login
 
 ```bash
-POST http://timeless.co/api/auth
+POST http://quietness.co/api/auth
 {
     "info": "Base64-encoded json string containing `email` and `password`"
 }
@@ -66,7 +66,7 @@ response = context.http.post(
 ### creating a post
 
 ```bash
-POST http://timeless.co/api/posts
+POST http://quietness.co/api/posts
 {
     "title": "foo bar",
     "description": "baz",

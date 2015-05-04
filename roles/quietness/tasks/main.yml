@@ -1,0 +1,109 @@
+- include: nginx.yml
+
+- name: ensure we have an ssh key for quietness
+  command: ssh-keygen -b 4096 -t rsa -f /root/.ssh/{{ ansible_hostname }}-quietness-rsa -P ""
+           creates=/root/.ssh/{{ ansible_hostname }}-quietness-rsa
+  tags:
+    - refresh
+
+- name: install npm dependencies
+  shell: npm instal -g bower
+
+- name: install bower dependencies
+  shell: bower install --allow-root
+  args:
+    chdir: "{{ application_path }}"
+  tags:
+    - refresh
+
+- name: upload the deploy key for quietness
+  command: github-tool --token={{ github_token }} add --project-name=quietness --key-title="{{ ansible_hostname }}-quietness" --key-file=/root/.ssh/{{ ansible_hostname }}-quietness-rsa.pub
+  tags:
+    - refresh
+
+- name: ensure we have the most updated version of the software from git
+  git: repo="git@github.com:weedlabs/quietness.git"
+       dest="{{ application_path }}" accept_hostkey=True
+       version="{{ repository_version }}"
+       key_file=/root/.ssh/{{ ansible_hostname }}-quietness-rsa
+  tags:
+    - refresh
+
+- name: place ssh config for github
+  template: src=ssh_config dest="/root/.ssh/config"
+    owner=root group=root mode=0644
+
+- include: python.yml
+
+- name: place alembic config
+  template: src=alembic.ini dest="{{ application_path }}/alembic.ini"
+    owner=root group=root mode=0644
+  tags:
+    - refresh
+
+- name: clear pyc files
+  shell: find /srv/{{ application_name }} -name '*.pyc' -delete
+  tags:
+    - refresh
+
+- name: place a handy shell script
+  template: src=shell-helper dest=/srv/shell-helper
+    owner=root group=root mode=0644
+  tags:
+    - refresh
+
+- name: ensure that flask is configured
+  template: src=supervisor.quietness.conf dest=/etc/supervisor/conf.d/web.{{ application_name }}.conf
+    owner=root group=root mode=0644
+  tags:
+    - supervisor
+    - refresh
+
+- name: ensure flask is running
+  supervisorctl: name="quietness" state=restarted
+  tags:
+    - refresh
+
+- name: setup log rotation
+  template: src=logrotate.conf dest="/etc/logrotate.d/{{ application_name }}"
+    owner=root group=root mode=0644
+
+- name: restart redis
+  service: name=redis_{{ redis_port }} state=started
+
+- name: build assets
+  command: python manage.py assets build
+  environment:
+    VENV_PATH: "{{ virtualenv_path }}"
+    HOST: "{{ domain }}"
+    REDIS_URI: "{{ REDIS_URI }}"
+    PORT: "80"
+    SQLALCHEMY_DATABASE_URI: "{{ SQLALCHEMY_DATABASE_URI }}"
+    DOMAIN: "{{ domain }}"
+    PATH: "{{ virtualenv_path }}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+    PYTHONPATH: "/srv/propellrapi/src:{{ virtualenv_path }}/lib/python2.7/site-packages:$PYTHONPATH"
+    PYTHONDONTWRITEBYTECODE: "x"
+    STATIC_BASE_URL: "http://{{ domain }}/static/build"
+  args:
+    chdir: "{{ application_path }}"
+  tags:
+    - refresh
+
+
+- name: run alembic
+  command: alembic upgrade head
+  environment:
+    VENV_PATH: "{{ virtualenv_path }}"
+    HOST: "{{ domain }}"
+    REDIS_URI: "{{ REDIS_URI }}"
+    PORT: "80"
+    SQLALCHEMY_DATABASE_URI: "{{ SQLALCHEMY_DATABASE_URI }}"
+    DOMAIN: "{{ domain }}"
+    PATH: "{{ virtualenv_path }}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+    PYTHONPATH: "/srv/propellrapi/src:{{ virtualenv_path }}/lib/python2.7/site-packages:$PYTHONPATH"
+    PYTHONDONTWRITEBYTECODE: "x"
+    STATIC_BASE_URL: "http://{{ domain }}/static/build"
+  args:
+    chdir: "{{ application_path }}"
+  tags:
+    - refresh

@@ -3,7 +3,7 @@
 #
 import uuid
 from datetime import datetime
-from timeless.models import User, Post
+from quietness.models import User, Post
 
 from .helpers import safe_db
 

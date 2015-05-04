@@ -2,10 +2,10 @@
 # # -*- coding: utf-8 -*-
 # #
 # from mock import patch
-# from timeless.models import User
+# from quietness.models import User
 
 
-# @patch('timeless.models.Post')
+# @patch('quietness.models.Post')
 # def test_create_post(Post):
 #     ("User.create_post should create a post with the correct user id")
 

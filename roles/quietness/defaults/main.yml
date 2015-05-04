@@ -1,0 +1,2 @@
+quietness_cassandra_host: localhost
+quietness_cassandra_port: 5000
