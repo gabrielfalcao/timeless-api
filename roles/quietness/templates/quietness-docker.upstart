@@ -1,4 +1,4 @@
-description     "Timeless master"
+description     "Quietness master"
 author          "Gabriel Falcao <gabriel@nacaolivre.org>"
 
 start on (started networking)

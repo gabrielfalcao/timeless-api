@@ -3,8 +3,8 @@ FROM cnry/python:2.7
 MAINTAINER gabriel@nacaolivre.org
 
 ENV WORKERS 1
-ENV TIMELESS_CASSANDRA_HOST: localhost
-ENV TIMELESS_CASSANDRA_PORT: 5000
+ENV QUIETNESS_CASSANDRA_HOST: localhost
+ENV QUIETNESS_CASSANDRA_PORT: 5000
 
 RUN adduser --quiet --system --uid 1000 --group --disabled-login \
   --home /srv/quietness quietness
