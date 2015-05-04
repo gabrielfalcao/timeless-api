@@ -5,18 +5,19 @@ import logging
 from sure import scenario
 
 from tumbler.core import Web
-from timeless.models import User, Post, UserToken, NewsletterSubscription
+from quietness.models import User, Post, UserToken, NewsletterSubscription
 from cqlengine import connection
 from cqlengine.management import sync_table, drop_table, create_keyspace
-from timeless.api.v1 import web
+from quietness.api.v1 import web
 
 
 def prepare_db(context):
-    # CREATE KEYSPACE timeless
+    # CREATE KEYSPACE quietness
     #        WITH REPLICATION =
     #                { 'class' : 'SimpleStrategy', 'replication_factor' : 3 };
-    context.connection = connection.setup(['127.0.0.1'], 'timeless')
-    create_keyspace('timeless')
+    context.connection = connection.setup(['127.0.0.1'], 'quietness')
+
+    create_keyspace('quietness', strategy_class='SimpleStrategy', replication_factor=1)
     tables = (User, Post, UserToken, NewsletterSubscription)
     for t in tables:
         try:
