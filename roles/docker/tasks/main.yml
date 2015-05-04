@@ -1,0 +1,32 @@
+- name: add docker repository key
+  apt_key: url=https://get.docker.io/gpg state=present
+
+- name: add experimental repository
+  apt_repository: >
+    repo="deb http://ftp.debian.org/debian experimental main" state=absent
+
+- name: add docker repository
+  apt_repository: >
+    repo="deb http://get.docker.io/ubuntu docker main" state=present
+
+- name: ensure that apt is ok
+  command: |
+    dpkg --configure -a
+
+- name: install docker and other packages
+  apt: pkg={{ item }} state=present
+  with_items:
+    - lxc-docker-{{ docker_version }}
+    - linux-image-extra-virtual
+    - mercurial
+    - python-pip
+
+
+- name: Install docker-py
+  pip: name=pip state=latest
+
+- name: Install docker-py
+  pip: name=requests state=latest
+
+- name: Install docker-py
+  pip: name=docker-py version=1.2.

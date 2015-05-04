@@ -1,45 +1,25 @@
 ---
 - hosts: all
   sudo: yes
-- include: quietness.yml
 
   vars:
-    docker_version: 1.5.0
+    docker_version: 1.6.0
 
-  tasks:
-    - name: add docker repository key
-      apt_key: url=https://get.docker.io/gpg state=present
+  roles:
+    - docker
 
-    - name: add docker repository
-      apt_repository: >
-        repo="deb http://get.docker.io/ubuntu docker main" state=present
+    - role: cassandra-docker
+      master: true
+      node_name: quietnessdb-master
 
-    - name: ensure that apt is ok
-      command: |
-        dpkg --configure -a
+    - role: cassandra-docker
+      master: false
+      node_name: quietnessdb-node1
 
-    - name: install docker and other packages
-      apt: pkg={{ item }} state=present
-      with_items:
-        - lxc-docker-{{ docker_version }}
-        - linux-image-extra-virtual
-        - build-essential
-        - libevent-dev
-        - libffi-dev
-        - openjdk-7-jre
-        - nginx
-        - uwsgi
-        - openjdk-7-jdk
+    - role: cassandra-docker
+      master: false
+      node_name: quietnessdb-node2
 
-    - name: add vagrant user to docker and adm groups
-      user: name=vagrant groups=docker,adm append=yes
-
-    - name: build docker image
-      command: |
-        docker build -t quietness .
-      args:
-        chdir: /sandbox
-
-    - name: run the server
-      command: |
-        docker run -d --net=host quietness
+    - role: quietness
+      cassandra_master: quietnessdb-master
+      repository_version: master
