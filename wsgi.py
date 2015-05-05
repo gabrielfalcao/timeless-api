@@ -4,14 +4,26 @@
 # flake8: noqa
 import os
 import logging
-from plant import Node
-from quietness import routes
 
 from tumbler.core import Web
 
-logging.basicConfig(
-    level=logging.DEBUG,
-)
+from pythonjsonlogger import jsonlogger
+from plant import Node
+from quietness import routes
+
+import logging
+import sys
+
+root = logging.getLogger()
+
+handler = logging.StreamHandler(sys.stdout)
+handler.setLevel(logging.DEBUG)
+
+formatter = jsonlogger.JsonFormatter(
+    '%(levelname)s %(asctime)s %(module)s %(process)d %(message)s %(pathname)s $(lineno)d $(funcName)s')
+
+handler.setFormatter(formatter)
+root.addHandler(handler)
 
 root_node = Node(__file__).dir
 
