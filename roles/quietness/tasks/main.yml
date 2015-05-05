@@ -1,19 +1,15 @@
 - name: copying code over
-  synchronize: src="{{ role_path }}/../../" dest=/srv/quietness archive=no links=yes
+  copy: src="." dest=/srv/quietness
 
 - name: setup quietness api in upstart
-  template: src=quietness-docker.upstart dest=/etc/init/quietness-api.conf
+  template: src=quietness-docker.upstart dest=/etc/init/quietnessapi.conf
     owner=root group=root mode=644
 
 - name: build quietness docker image
-  docker:
-    #docker_api_version: 1.6.0
-    name: quietness-api
-    image: /srv/quietness
-    state: present
-    volumes:
-    - /srv/quietness
+  command: docker build -t quietnessapi .
+  args:
+    chdir: /srv/quietness/timeless
 
 - name: start quietness api
-  service: name=quietness-api
+  service: name=quietnessapi
     state=restarted

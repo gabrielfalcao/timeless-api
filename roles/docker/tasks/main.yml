@@ -22,11 +22,14 @@
     - python-pip
 
 
-- name: Install docker-py
+- name: Install latest pip
   pip: name=pip state=latest
 
-- name: Install docker-py
+- name: Install latest requests
   pip: name=requests state=latest
 
 - name: Install docker-py
-  pip: name=docker-py version=1.2.
+  pip: name=docker-py state=latest
+
+- name: restart docker
+  command: service docker restart

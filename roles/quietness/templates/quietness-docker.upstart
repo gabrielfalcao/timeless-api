@@ -11,8 +11,8 @@ env CASSANDRA_PORT={{ quietness_cassandra_port }}
 
 exec docker run --rm --net=host \
   -e CASSANDRA_PORT -e CASSANDRA_HOST \
-  --name=quietness-api \
+  --name=quietnessapi \
   --volume=/srv/quietness:/srv/quietness \
-  quietness-api
+  quietnessapi
 
 EXPOSE 5000

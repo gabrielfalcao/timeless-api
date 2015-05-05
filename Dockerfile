@@ -30,4 +30,4 @@ USER quietness
 
 EXPOSE 5000
 
-CMD exec uwsgi --enable-threads --http-socket 0.0.0.0.5000 --wsgi-file quietness/wsgi.py --master --processes $WORKERS
+CMD exec uwsgi --enable-threads --http-socket 0.0.0.0.5000 --wsgi-file wsgi.py --master --processes $WORKERS
