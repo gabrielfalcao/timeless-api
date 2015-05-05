@@ -24,10 +24,10 @@ RUN pip install -r /tmp/requirements.txt
 # uwsgi
 RUN pip install uwsgi
 
-ADD . /srv/quietness
+COPY . /srv/quietness
 
 USER quietness
 
 EXPOSE 5000
 
-CMD exec uwsgi --http 0.0.0.0.5000 --wsgi-file wsgi.py --master --processes $WORKERS
+CMD exec uwsgi --http :5000 --wsgi-file wsgi.py --master --processes $WORKERS --enable-threads

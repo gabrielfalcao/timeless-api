@@ -18,6 +18,11 @@
   template: src=nginx-quietness-docker.upstart dest=/etc/init/nginx.conf
     owner=root group=root mode=644
 
+- name: ensure that quietnessapi docker image is not there
+  command: docker rmi -f quietnessapi
+  args:
+    chdir: /srv/quietness/quietness
+
 - name: build quietness docker image
   command: docker build -t quietnessapi .
   args:
