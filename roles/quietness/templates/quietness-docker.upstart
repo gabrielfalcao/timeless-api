@@ -9,9 +9,8 @@ respawn limit 5 60
 env CASSANDRA_HOST={{ quietness_cassandra_host }}
 env CASSANDRA_PORT={{ quietness_cassandra_port }}
 
-exec docker run --rm --net=bridge \
+exec docker run --rm --net=host \
   --log-driver="json-file" \
   -e CASSANDRA_PORT -e CASSANDRA_HOST \
-  --name=quietnessapi \
   --volume=/srv/quietness:/srv/quietness \
   quietnessapi
