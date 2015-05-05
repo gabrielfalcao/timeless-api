@@ -1,5 +1,8 @@
 - name: copying code over
-  copy: src="." dest=/srv/quietness
+  copy: src="." dest=/srv
+
+- name: ensuring latest dockerfile
+  copy: src=Dockerfile dest=/srv/quietness/Dockerfile
 
 - name: place the nginx dockerfile from template
   command: mkdir -p /srv/nginx
@@ -18,15 +21,10 @@
   template: src=nginx-quietness-docker.upstart dest=/etc/init/nginx.conf
     owner=root group=root mode=644
 
-- name: ensure that quietnessapi docker image is not there
-  command: docker rmi -f quietnessapi
-  args:
-    chdir: /srv/quietness/quietness
-
 - name: build quietness docker image
   command: docker build -t quietnessapi .
   args:
-    chdir: /srv/quietness/quietness
+    chdir: /srv/quietness
 
 - name: start quietness api
   service: name=quietnessapi
