@@ -9,10 +9,7 @@ from quietness import routes
 
 from tumbler.core import Web
 
-log_path = os.getenv('QUIETNESS_LOG_PATH', '/var/log/quietness.log')
-
 logging.basicConfig(
-    filename=log_path,
     level=logging.DEBUG,
 )
 
