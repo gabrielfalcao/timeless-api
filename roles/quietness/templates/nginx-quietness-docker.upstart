@@ -1,4 +1,4 @@
-description     "Quietness master"
+description     "Nginx quietness"
 author          "Gabriel Falcao <gabriel@nacaolivre.org>"
 
 start on (started networking)
@@ -6,10 +6,7 @@ start on (started networking)
 respawn
 respawn limit 5 60
 
-env CASSANDRA_PORT={{ quietness_cassandra_port }}
-
 exec docker run --rm --net=host \
   -e CASSANDRA_PORT -e CASSANDRA_HOST \
-  --name=quietness \
   --volume=/srv/quietness:/srv/quietness \
-  quietness
+  nginx
