@@ -1,8 +1,8 @@
 - name: copying backend code over
-  synchronize: src="backend" dest=/srv/backend recursive=yes archive=no links=yes
+  copy: src="backend" dest=/srv/
 
 - name: copying frontend code
-  synchronize: src="frontend" dest=/srv/frontend recursive=yes archive=no links=yes
+  copy: src="frontend" dest=/srv/
 
 - name: ensuring latest dockerfile
   copy: src=backend/Dockerfile dest=/srv/backend/Dockerfile
@@ -27,7 +27,7 @@
 - name: build frontend docker image
   command: docker build -t quietnessfrontend .
   args:
-    chdir: /srv/backend/frontend
+    chdir: /srv/frontend
 
 - name: build nginx docker image
   command: docker build -t quietnessnginx .

@@ -6,20 +6,7 @@
     docker_version: 1.6.0
 
   roles:
-    - docker
-
-    - role: cassandra-docker
-      master: true
-      node_name: quietnessdb-master
-
-    - role: cassandra-docker
-      master: false
-      node_name: quietnessdb-node1
-
-    - role: cassandra-docker
-      master: false
-      node_name: quietnessdb-node2
-
+    - base-docker
     - role: quietness
       cassandra_master: quietnessdb-master
       repository_version: master

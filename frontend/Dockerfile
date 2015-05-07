@@ -13,10 +13,10 @@ RUN npm install -g bower grunt-cli
 # Define working directory.
 WORKDIR /quietness
 
-VOLUME . /quietness
+COPY . /quietness
 
 RUN npm install -g
-RUN bower install
+RUN bower install --allow-root
 
 EXPOSE 9000
 
