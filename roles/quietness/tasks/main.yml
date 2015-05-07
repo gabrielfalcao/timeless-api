@@ -1,5 +1,5 @@
 - name: copying code over
-  copy: src="." dest=/srv
+  synchronize: src="." dest=/srv archive=no links=yes
 
 - name: ensuring latest dockerfile
   copy: src=Dockerfile dest=/srv/quietness/Dockerfile
@@ -17,7 +17,6 @@
   command: docker build -t quietnessapi .
   args:
     chdir: /srv/quietness
-
 
 - name: build nginx docker image
   command: docker build -t quietnessnginx .
@@ -42,7 +41,6 @@
 - name: start quietness api
   service: name=quietnessapi
     state=restarted
-
 
 - name: start nginx
   service: name=quietnessnginx
