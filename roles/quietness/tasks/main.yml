@@ -1,8 +1,8 @@
 - name: copying backend code over
-  copy: src="backend" dest=/srv/backend
+  synchronize: src="backend" dest=/srv/backend recursive=yes archive=no links=yes
 
 - name: copying frontend code
-  copy: src="frontend" dest=/srv/frontend
+  synchronize: src="frontend" dest=/srv/frontend recursive=yes archive=no links=yes
 
 - name: ensuring latest dockerfile
   copy: src=backend/Dockerfile dest=/srv/backend/Dockerfile
