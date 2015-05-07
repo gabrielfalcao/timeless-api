@@ -4,7 +4,7 @@ MAINTAINER gabriel@nacaolivre.org
 
 ENV WORKERS 1
 ENV QUIETNESS_CASSANDRA_HOST: localhost
-ENV QUIETNESS_CASSANDRA_PORT: 9090
+ENV QUIETNESS_CASSANDRA_PORT: 7000
 
 RUN adduser --quiet --system --uid 1000 --group --disabled-login \
   --home /srv/quietness quietness

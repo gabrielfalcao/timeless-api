@@ -1,0 +1,281 @@
+/* 
+
+Author: André Cardoso
+Quietness Stylesheets 2015
+
+*/
+
+* 	{
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+h2, .pagination h3 a, h3, h4, .sans, .tagline {
+	font-family: Avenir, Helvetica Neue, sans-serif;
+}
+
+.h1-logo {
+
+}
+
+/* Icon fonts */
+@font-face {
+	font-family: 'icomoon';
+	src:url('../fonts/icomoon.eot?4uh1m5');
+	src:url('../fonts/icomoon.eot?#iefix4uh1m5') format('embedded-opentype'),
+		url('../fonts/icomoon.woff?4uh1m5') format('woff'),
+		url('../fonts/icomoon.ttf?4uh1m5') format('truetype'),
+		url('../fonts/icomoon.svg?4uh1m5#icomoon') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+	font-family: 'icomoon';
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+}
+
+
+.icon-f:before {
+	content: "\e600";
+}
+
+.icon-k:before {
+	content: "\e601";
+}
+
+.icon-l:before {
+	content: "\e602";
+}
+
+.icon-t {
+	font-size:1.3em;
+}
+
+.icon-t:before {
+	content: "\e603";
+}
+
+.logo {
+	display:block;
+	text-align:center;
+}
+
+.logo-img {
+	margin-bottom:-3.9em;
+}
+
+.tagline {
+	margin-left:1em;
+	font-weight:normal;
+	font-family:$font-family-secondary;
+}
+
+.pagination {
+	padding-top: 3em;
+	padding-bottom: 4em;
+	border-bottom:1px solid #e7e3e3;
+}
+
+/* Nav */
+
+nav {
+  width: 100%;
+  background: #fff;
+  border-bottom: 3px solid $oil;
+  -webkit-transition: all 0.4s ease-in-out;
+  -moz-transition: all 0.4s ease-in-out;
+  z-index: 9999;
+  top: 0;
+  position: relative;
+}
+
+nav h1 {
+  font-size: 30px;
+  text-indent: 40px;
+  font-weight:  bold;
+}
+
+nav .top-bar {
+	padding-top:2em;
+}
+
+.top-bar {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 0;
+  margin-bottom: -1em; }
+  .top-bar:before, .top-bar:after {
+    content: " ";
+    display: table; }
+  .top-bar:after {
+    clear: both; }
+  .top-bar.collapse > .column,
+  .top-bar.collapse > .columns {
+    padding-left: 0;
+    padding-right: 0; }
+  .top-bar.collapse .top-bar {
+    margin-left: 0;
+    margin-right: 0; }
+  .top-bar .top-bar {
+    width: auto;
+    margin-left: -0.9375rem;
+    margin-right: -0.9375rem;
+    margin-top: 0;
+    margin-bottom: 0;
+    max-width: none; }
+    .top-bar .top-bar:before, .top-bar .top-bar:after {
+      content: " ";
+      display: table; }
+    .top-bar .top-bar:after {
+      clear: both; }
+    .top-bar .top-bar.collapse {
+      width: auto;
+      margin: 0;
+      max-width: none; }
+      .top-bar .top-bar.collapse:before, .top-bar .top-bar.collapse:after {
+        content: " ";
+        display: table; }
+      .top-bar .top-bar.collapse:after {
+        clear: both; }
+
+.shrink {
+  padding: 20px 0;
+}
+
+  .sign-in {
+  	padding-top: 11px;
+  	padding-right:3.3em;
+  	text-align:right;
+  	text-transform: uppercase;
+  }
+
+.sign-in .twitter {
+	font-size:0.8em;
+	font-family:$font-family-secondary;
+}  
+
+.sign-in .twitter span {
+	display:inline-block;
+	vertical-align:middle;
+	padding-bottom:10px;
+}
+
+/* List structure */
+
+
+
+.article-list {
+	margin-top:0;
+}
+
+.item {
+	padding:0;
+	border-bottom:1px solid #e7e3e3;
+	overflow:hidden;
+	cursor: pointer;
+	-webkit-transition: opacity 0.15s, -webkit-transform 0.25s;
+	transition: opacity 0.15s, transform 0.25s;
+}
+
+li {
+	list-style: none;
+}
+
+/* Card */
+
+.giga a {
+	color:$jet;
+}
+
+.item:hover {
+	background-color: $green;
+	-webkit-transition: opacity 0.15s, -webkit-transform 0.25s;
+	transition: opacity 0.15s, transform 0.25s;
+}
+
+.item:hover a, .item:hover span {
+	color:$white;
+}
+
+.inline-list > li {
+	margin-left:0;
+}
+
+.item-content {
+	padding-top:4em;
+	padding-bottom:2em;
+}	
+
+.share-bar {
+	opacity: 0;
+	-webkit-transition: opacity 0.15s, -webkit-transform 0.25s;
+	transition: opacity 0.15s, transform 0.25s;
+	-webkit-transform: translate3d(0,45px,0);
+	transform: translate3d(0,45px,0);
+	overflow:auto;
+}
+
+.content-wrap:hover .share-bar {
+	opacity: 1;
+	-webkit-transform: translate3d(0,4px,0);
+	transform: translate3d(0,4px,0);
+}
+
+.page-footer {
+	padding:4em 0;
+	background-color:$silver;
+	border-bottom:1px solid #e7e3e3;
+}
+
+.email-field {
+	margin-top:2em;
+}
+
+.email-field, .button-email {
+	padding:2.5em 0;
+	font-family:$font-family-secondary;
+	font-size:$h3-font-size;
+	margin-bottom:0.2em;
+}
+
+.links-footer li{
+	padding-left:3em;
+}
+
+.links-footer li a {
+	font-family:$font-family-secondary;
+	font-size:$h4-font-size;
+}
+
+footer { 
+padding-top:4em;
+padding-bottom:6em;
+}
+
+
+.heaven {
+	padding-bottom:2em;
+
+}
+
+.small-logo {
+	width:48px;
+	margin-right:0.8em;
+}
+
+/* Share buttons */
+
+.share-buttons {width:25%;}
+.first {background-color:#90d9cd;}
+.second {background-color:#7ed3c4;}
+.third {background-color:#6bcdbc;}
+.fourth {background-color:#59c6b4;}
+

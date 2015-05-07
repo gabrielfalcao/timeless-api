@@ -1,11 +1,17 @@
-- name: copying code over
-  synchronize: src="." dest=/srv archive=no links=yes
+- name: copying backend code over
+  copy: src="backend" dest=/srv/backend
+
+- name: copying frontend code
+  copy: src="frontend" dest=/srv/frontend
 
 - name: ensuring latest dockerfile
-  copy: src=Dockerfile dest=/srv/quietness/Dockerfile
+  copy: src=backend/Dockerfile dest=/srv/backend/Dockerfile
 
 - name: place the nginx dockerfile from template
   command: mkdir -p /srv/nginx
+
+- name: place the cassandra data dir
+  command: mkdir -p /srv/cassandra
 
 - name: place the nginx conf for its dockerfile
   template: src=nginx.conf dest=/srv/nginx/nginx.conf
@@ -16,7 +22,12 @@
 - name: build uwsgi docker image
   command: docker build -t quietnessapi .
   args:
-    chdir: /srv/quietness
+    chdir: /srv/backend
+
+- name: build frontend docker image
+  command: docker build -t quietnessfrontend .
+  args:
+    chdir: /srv/backend/frontend
 
 - name: build nginx docker image
   command: docker build -t quietnessnginx .
@@ -32,6 +43,10 @@
 
 - name: setup quietness api in upstart
   template: src=quietness-docker.upstart dest=/etc/init/quietnessapi.conf
+    owner=root group=root mode=644
+
+- name: setup quietness frontend in upstart
+  template: src=quietness-docker.upstart dest=/etc/init/quietnessfrontend.conf
     owner=root group=root mode=644
 
 - name: setup nginx api in upstart

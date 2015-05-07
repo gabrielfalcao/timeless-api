@@ -1,3 +1,0 @@
-Host github.com
-    User github
-    IdentityFile /root/.ssh/{{ ansible_hostname }}-{{ repository_name }}-rsa
