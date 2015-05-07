@@ -7,15 +7,16 @@
 # Pull base image.
 FROM node
 
-# Install Bower & Grunt
-RUN npm install -g bower grunt-cli
-
 # Define working directory.
 WORKDIR /quietness
 
-COPY . /quietness
+ADD . /quietness
 
-RUN npm install -g
+# Install Bower & Grunt
+RUN npm install -g bower grunt-cli
+# Install stuff from package.json
+RUN npm install
+# Install bower dependencies
 RUN bower install --allow-root
 
 EXPOSE 9000

@@ -12,7 +12,7 @@
     "type": "git",
     "url": ""
   },
-  "devDependencies": {
+  "dependencies": {
     "load-grunt-tasks": "~3.1.0",
     "node-sass": "~2.0.1",
     "grunt-sass": "~0.18.0",

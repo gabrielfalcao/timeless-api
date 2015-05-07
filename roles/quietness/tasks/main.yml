@@ -57,6 +57,10 @@
   service: name=quietnessapi
     state=restarted
 
+- name: start quietness frontend
+  service: name=quietnessfrontend
+    state=restarted
+
 - name: start nginx
   service: name=quietnessnginx
     state=restarted
