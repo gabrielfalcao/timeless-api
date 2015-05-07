@@ -10,6 +10,8 @@ from cqlengine import connection
 from cqlengine.management import sync_table, drop_table, create_keyspace
 from quietness.api.v1 import web
 
+# TODO: truncate tables instead of dropping it
+
 
 def prepare_db(context):
     # CREATE KEYSPACE quietness

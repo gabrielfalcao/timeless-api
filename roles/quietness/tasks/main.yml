@@ -13,18 +13,31 @@
 - name: place the nginx dockerfile from template
   template: src=nginx.dockerfile dest=/srv/nginx/Dockerfile
 
+- name: build uwsgi docker image
+  command: docker build -t quietnessapi .
+  args:
+    chdir: /srv/quietness
+
+
+- name: build nginx docker image
+  command: docker build -t quietnessnginx .
+  args:
+    chdir: /srv/nginx
+
+- name: download the cassandra image
+  command: docker pull tobert/cassandra
+
+- name: setup cassandra in upstart
+  template: src=cassandra.upstart dest=/etc/init/cassandra.conf
+    owner=root group=root mode=644
+
 - name: setup quietness api in upstart
   template: src=quietness-docker.upstart dest=/etc/init/quietnessapi.conf
     owner=root group=root mode=644
 
 - name: setup nginx api in upstart
-  template: src=nginx-quietness-docker.upstart dest=/etc/init/nginx.conf
+  template: src=nginx-quietness-docker.upstart dest=/etc/init/quietnessnginx.conf
     owner=root group=root mode=644
-
-- name: build quietness docker image
-  command: docker build -t quietnessapi .
-  args:
-    chdir: /srv/quietness
 
 - name: start quietness api
   service: name=quietnessapi
@@ -32,5 +45,5 @@
 
 
 - name: start nginx
-  service: name=nginx
+  service: name=quietnessnginx
     state=restarted

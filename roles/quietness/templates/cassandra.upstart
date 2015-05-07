@@ -1,4 +1,4 @@
-description     "Nginx quietness"
+description     "Cassandra"
 author          "Gabriel Falcao <gabriel@nacaolivre.org>"
 
 start on (started networking)
@@ -6,7 +6,8 @@ start on (started networking)
 respawn
 respawn limit 5 60
 
+
 exec docker run --rm --net=host \
   --log-driver="json-file" \
-  --volume=/srv/quietness:/srv/quietness \
-  quietnessnginx
+  --volume=/srv/cassandra:/data \
+  cassandra
