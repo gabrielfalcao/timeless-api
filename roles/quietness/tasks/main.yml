@@ -1,66 +1,84 @@
 - name: copying backend code over
   copy: src="backend" dest=/srv/
+  tags: backend
 
 - name: copying frontend code
   copy: src="frontend" dest=/srv/
+  tags: frontend
 
 - name: ensuring latest dockerfile
   copy: src=backend/Dockerfile dest=/srv/backend/Dockerfile
+  tags: backend
 
 - name: place the nginx dockerfile from template
   command: mkdir -p /srv/nginx
+  tags: nginx
 
 - name: place the cassandra data dir
   command: mkdir -p /srv/cassandra
+  tags: cassandra
 
 - name: place the nginx conf for its dockerfile
   template: src=nginx.conf dest=/srv/nginx/nginx.conf
+  tags: nginx
 
 - name: place the nginx dockerfile from template
   template: src=nginx.dockerfile dest=/srv/nginx/Dockerfile
+  tags: nginx
 
 - name: build uwsgi docker image
   command: docker build -t quietnessapi .
   args:
     chdir: /srv/backend
+  tags: backend
 
 - name: build frontend docker image
   command: docker build -t quietnessfrontend .
   args:
     chdir: /srv/frontend
+  tags: frontend
 
 - name: build nginx docker image
   command: docker build -t quietnessnginx .
   args:
     chdir: /srv/nginx
+  tags: nginx
 
 - name: download the cassandra image
   command: docker pull tobert/cassandra
+  tags: cassandra
 
 - name: setup cassandra in upstart
   template: src=cassandra.upstart dest=/etc/init/cassandra.conf
     owner=root group=root mode=644
+  tags: cassandra
 
 - name: setup quietness api in upstart
   template: src=quietness-docker.upstart dest=/etc/init/quietnessapi.conf
     owner=root group=root mode=644
+  tags: backend
 
 - name: setup quietness frontend in upstart
   template: src=quietness-docker.upstart dest=/etc/init/quietnessfrontend.conf
     owner=root group=root mode=644
+  tags: frontend
 
 - name: setup nginx api in upstart
   template: src=nginx-quietness-docker.upstart dest=/etc/init/quietnessnginx.conf
     owner=root group=root mode=644
+  tags: nginx
 
 - name: start quietness api
   service: name=quietnessapi
     state=restarted
+  tags: backend
 
 - name: start quietness frontend
   service: name=quietnessfrontend
     state=restarted
+  tags: frontend
 
 - name: start nginx
   service: name=quietnessnginx
     state=restarted
+  tags: nginx

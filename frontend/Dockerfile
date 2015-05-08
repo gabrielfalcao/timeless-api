@@ -15,7 +15,7 @@ ADD . /quietness
 # Install Bower & Grunt
 RUN npm install -g bower grunt-cli
 # Install stuff from package.json
-RUN npm install
+RUN npm install -g
 # Install bower dependencies
 RUN bower install --allow-root
 
