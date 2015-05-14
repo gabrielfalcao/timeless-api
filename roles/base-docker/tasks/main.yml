@@ -1,13 +1,16 @@
 - name: add docker repository key
   apt_key: url=https://get.docker.io/gpg state=present
+  tags: docker
 
 - name: add experimental repository
   apt_repository: >
     repo="deb http://ftp.debian.org/debian experimental main" state=absent
+  tags: docker
 
 - name: add docker repository
   apt_repository: >
     repo="deb http://get.docker.io/ubuntu docker main" state=present
+  tags: docker
 
 - name: install docker and other packages
   apt: pkg={{ item }} state=present
@@ -15,6 +18,8 @@
     - lxc-docker-{{ docker_version }}
     - linux-image-extra-virtual
     - mercurial
+  tags: docker
 
 - name: restart docker
   command: service docker restart
+  tags: docker
